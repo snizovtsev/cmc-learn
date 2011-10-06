@@ -1,0 +1,6 @@
+train/
+tests/
+*.o
+*.a
+bin/
+Makefile
