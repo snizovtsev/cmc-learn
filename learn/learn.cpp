@@ -10,10 +10,10 @@ struct TrainItem {
     QImage image;
 };
 
-typedef QVector < struct feature_node* > Instances;
+typedef QVector < struct feature_node* > Features;
 typedef QVector < int > Labels;
 
-void genFeatures(Instances& features, Labels& labels, const TrainItem& item)
+void genFeatures(Features& features, Labels& labels, const TrainItem& item)
 {
     OrientedGradients g(item.image);
 
@@ -34,23 +34,46 @@ void genFeatures(Instances& features, Labels& labels, const TrainItem& item)
     }
 }
 
-int main(int, char* [])
+bool readInstances(const char* fileName, Features& features, Labels& labels)
 {
-    Instances features;
-    Labels labels;
-    QTextStream in(stdin);
+    QFile file(fileName);
+    const QString path= QFileInfo(file).path();
 
-    while (!(in.skipWhiteSpace(), in.atEnd())) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical("Can't open \"%s\": %s",
+                  fileName, qPrintable(file.errorString()));
+        return false;
+    }
+
+    QTextStream markup(&file);
+    while (!(markup.skipWhiteSpace(), markup.atEnd())) {
         TrainItem item;
-        in >> item.id >> item.top >> item.left;
-        in >> item.bottom >> item.right;
-        QString filename = QString::number(item.id) + ".png";
+        markup >> item.id >> item.top >> item.left;
+        markup >> item.bottom >> item.right;
 
-        qDebug() << "Loading " << filename;
-        item.image.load(filename);
+        QString imgFile = QString("%1/%2.png").arg(path).arg(item.id);
+        qDebug() << "Loading " << imgFile;
 
+        if (!item.image.load(imgFile)) {
+            qCritical("Error loading \"%s\"", qPrintable(imgFile));
+            return false;
+        }
         genFeatures(features, labels, item);
     }
+
+    return true;
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc != 3) {
+        qCritical() << "Usage:" << argv[0] << "[markup file] [model file]";
+        return 1;
+    }
+
+    Features features;
+    Labels labels;
+    readInstances(argv[1], features, labels);
 
     Q_ASSERT(features.size() == labels.size());
     qDebug() << "Total number of descriptors: " << features.size();
@@ -73,8 +96,8 @@ int main(int, char* [])
     qDebug() << "Training...";
     struct model* pedestrianModel = train(&problem, &param);
 
-    if (save_model("model.txt", pedestrianModel))
-        qCritical() << "Can't save the model";
+    if (save_model(argv[2], pedestrianModel))
+        qCritical("Can't save the model");
 
     free_and_destroy_model(&pedestrianModel);
     destroy_param(&param);
