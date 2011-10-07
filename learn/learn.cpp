@@ -4,7 +4,7 @@
 #include <linear.h>
 
 struct TrainItem {
-    int id;
+    QString id;
     int left, top;
     int right, bottom;
     QImage image;
