@@ -9,11 +9,26 @@ QVector<int> detect(const model* model, QImage image)
     QVector<int> result;
     OrientedGradients g(image);
 
-    for (int x = 0; x + PATCH_WIDTH < g.xvec.width(); x += 5) {
-        struct feature_node* descr = makeDescriptor(x, 0, g.xvec, g.yvec);
+    double lastValue = -1;
+    int lastX = -PATCH_WIDTH;
 
-        if (predict(model, descr))
-            result.push_back(x);
+    for (int x = 0; x + PATCH_WIDTH < g.xvec.width(); x += 2) {
+        struct feature_node* descr = makeDescriptor(x, 0, g.xvec, g.yvec);
+        double value;
+
+        if (1 == predict_values(model, descr, &value)) {
+            if (x - lastX > PATCH_WIDTH * 0.7) {
+                result.push_back(x);
+                lastX = x;
+                lastValue = value;
+            } else if (lastValue < value) {
+                result[result.size()-1] = x;
+                lastX = x;
+                lastValue = value;
+            }
+        }
+
+        //qDebug("%d %lf", x, value);
 
         free(descr);
     }
