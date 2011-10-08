@@ -94,6 +94,9 @@ int main(int argc, char* argv[])
     param.weight = NULL;
 
     qDebug() << "Training...";
+    const char* err;
+    if ((err = check_parameter(&problem, &param)) != NULL)
+        qFatal("Internal error: %s", err);
     struct model* pedestrianModel = train(&problem, &param);
 
     if (save_model(argv[2], pedestrianModel))
