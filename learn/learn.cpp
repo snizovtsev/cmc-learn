@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
     problem.x = features.data();
 
     struct parameter param;
-    param.solver_type = L2R_L2LOSS_SVC_DUAL;
-    param.C = 1;
+    param.solver_type = L2R_L2LOSS_SVC;
+    param.C = 0.01; /* [Dalal and Triggs, 2005, Sect. 6.6] */
     param.eps = 1e-4;
     param.nr_weight = 0;
     param.weight_label = NULL;
