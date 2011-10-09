@@ -61,9 +61,9 @@ void processFile(const struct model* model, const QString &fileName, bool labele
 
     QTextStream out(stdout);
     foreach (int x, pedestrians) {
-        out << info.baseName() << " "
-            << x << " 0 "
-            << x + PATCH_WIDTH + 5 << " " << 0 + PATCH_HEIGHT
+        out << info.baseName() << "\t"
+            << "0\t" << x << "\t"
+            << 0 + PATCH_HEIGHT << '\t' << x + PATCH_WIDTH
             << endl;
     }
 

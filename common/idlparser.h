@@ -11,6 +11,7 @@ public:
     bool exactlyPedestrian(int loc) const { return m_loc.contains(loc); }
     bool isPedestrian(int loc) const;
 
+    const QList<int>& pedestrians() const { return m_loc; }
 private:
     QList <int> m_loc;
 };
@@ -19,6 +20,7 @@ class IdlParser
 {
 public:
     explicit IdlParser(const char* fileName);
+    explicit IdlParser(QTextStream& stream) { construct(stream); }
 
     const QStringList& images() const { return m_images; }
     const IdlNode node(QString id) const { return m_node[id]; }
@@ -27,6 +29,8 @@ private:
     QStringList m_images;
     QMap<QString, IdlNode> m_node;
     QString m_path;
+
+    void construct(QTextStream &stream);
 };
 
 #endif // IDLPARSER_H

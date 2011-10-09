@@ -24,6 +24,11 @@ IdlParser::IdlParser(const char* fileName)
     }
 
     QTextStream stream(&file);
+    construct(stream);
+}
+
+void IdlParser::construct(QTextStream &stream)
+{
     while (!(stream.skipWhiteSpace(), stream.atEnd())) {
         QString id;
         int top, left, bottom, right;
