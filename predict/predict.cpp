@@ -7,13 +7,13 @@
 QVector<int> detect(const model* model, QImage image)
 {
     QVector<int> result;
-    OrientedGradients g(image);
+    OrientedGradients gradients(image);
 
     double lastValue = -1;
     int lastX = -PATCH_WIDTH;
 
-    for (int x = 0; x + PATCH_WIDTH < g.xvec.width(); x += 2) {
-        struct feature_node* descr = makeDescriptor(x, 0, g.xvec, g.yvec);
+    for (int x = 0; x + PATCH_WIDTH < gradients.xvec.width(); x += 2) {
+        struct feature_node* descr = makeDescriptor(x, 0, gradients);
         double value;
 
         if (1 == predict_values(model, descr, &value)) {

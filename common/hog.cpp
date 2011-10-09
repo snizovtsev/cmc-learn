@@ -3,14 +3,14 @@
 
 #include <QtCore>
 
-HOG::HOG(int left, int top, const QImageF &xvec, const QImageF &yvec)
+HOG::HOG(int left, int top, const OrientedGradients& gradients)
 {
     qFill(weight, weight+NSTEPS, 0.0);
 
     for (int i = 0; i < CELL_SIZE; ++i) {
         for (int j = 0; j < CELL_SIZE; ++j) {
-            qreal x = xvec.pixel(left + j, top + i);
-            qreal y = yvec.pixel(left + j, top + i);
+            qreal x = gradients.xvec.pixel(left + j, top + i);
+            qreal y = gradients.yvec.pixel(left + j, top + i);
 
             weight[HOG::hash(x, y)] += 1.0; // FIXME
         }
@@ -33,7 +33,7 @@ int HOG::hash(qreal x, qreal y)
 }
 
 OrientedGradients::OrientedGradients(QImage image)
-    : xvec(image), yvec(xvec)
+    : xvec(image), yvec(xvec), cacheKey(image.cacheKey())
 {
     static const QVector<qreal> gauss = gaussKernel(1.5);
     static const QVector<qreal> diff = diffKernel(1.5);
@@ -54,7 +54,7 @@ struct CacheKey {
     }
 };
 
-struct feature_node* makeDescriptor(int left, int top, const QImageF& xvec, const QImageF& yvec)
+struct feature_node* makeDescriptor(int left, int top, const OrientedGradients& gradients)
 {
     struct feature_node* result = MALLOC(struct feature_node, NFEATURES + 1);
     if (result == NULL)
@@ -72,9 +72,9 @@ struct feature_node* makeDescriptor(int left, int top, const QImageF& xvec, cons
             int x = left + c * CELL_SIZE;
             int y = top + r * CELL_SIZE;
 
-            CacheKey key = {x, y, xvec.cacheKey()};
+            CacheKey key = {x, y, gradients.cacheKey};
             if (!cache.contains(key))
-                cache.insert(key, new HOG(x, y, xvec, yvec));
+                cache.insert(key, new HOG(x, y, gradients));
 
             HOG* cell = cache[key];
             for (int s = 0; s < HOG::NSTEPS; ++s)

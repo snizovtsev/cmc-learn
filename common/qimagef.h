@@ -13,7 +13,6 @@ public:
 
     qreal* data() { return m_data; }
     const qreal* data() const { return m_data; }
-    qint64 cacheKey() const { return m_cacheKey; }
 
     int width() { return m_width; }
     int height() { return m_height; }
@@ -30,7 +29,6 @@ private:
     int m_height;
     int m_data_len;
     qreal* m_data;
-    qint64 m_cacheKey;
 
     QImage& operator = (const QImageF& other);
     QImageF() { }

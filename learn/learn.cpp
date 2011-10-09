@@ -1,38 +1,11 @@
-#include "hog.h"
-
 #include <QtCore>
 #include <linear.h>
 
-struct TrainItem {
-    QString id;
-    int left, top;
-    int right, bottom;
-    QImage image;
-};
+#include "hog.h"
+#include "idlparser.h"
 
 typedef QVector < struct feature_node* > Features;
 typedef QVector < int > Labels;
-
-void genFeatures(Features& features, Labels& labels, const TrainItem& item)
-{
-    OrientedGradients g(item.image);
-
-    Q_ASSERT(item.top == 0);
-    Q_ASSERT(item.bottom == 200);
-    Q_ASSERT((item.right - item.left) == 80);
-
-    features.append(makeDescriptor(item.left, item.top, g.xvec, g.yvec));
-    labels.append(true);
-
-    for (int x = 0; (x + PATCH_WIDTH) < item.left; ++x) {
-        features.append(makeDescriptor(x, item.top, g.xvec, g.yvec));
-        labels.append(false);
-    }
-    for (int x = item.right; (x + PATCH_WIDTH) < g.xvec.width(); ++x) {
-        features.append(makeDescriptor(x, item.top, g.xvec, g.yvec));
-        labels.append(false);
-    }
-}
 
 bool readInstances(const char* fileName, Features& features, Labels& labels)
 {
@@ -45,20 +18,29 @@ bool readInstances(const char* fileName, Features& features, Labels& labels)
         return false;
     }
 
-    QTextStream markup(&file);
-    while (!(markup.skipWhiteSpace(), markup.atEnd())) {
-        TrainItem item;
-        markup >> item.id >> item.top >> item.left;
-        markup >> item.bottom >> item.right;
+    QTextStream stream(&file);
+    IdlParser parser(stream);
 
-        QString imgFile = QString("%1/%2.png").arg(path).arg(item.id);
-        qDebug() << "Loading " << imgFile;
+    foreach(QString id, parser.images()) {
+        IdlNode node = parser.node(id);
+        QImage image;
 
-        if (!item.image.load(imgFile)) {
-            qCritical("Error loading \"%s\"", qPrintable(imgFile));
+        QString imageName = QString("%1/%2.png").arg(path, id);
+        qDebug() << "Loading " << imageName;
+
+        if (!image.load(imageName)) {
+            qCritical("Error loading \"%s\"", qPrintable(imageName));
             return false;
         }
-        genFeatures(features, labels, item);
+
+        OrientedGradients gradients(image);
+        for (int x = 0; (x + PATCH_WIDTH) < image.width(); ++x) {
+            if (node.isPedestrian(x) && !node.exactlyPedestrian(x))
+                continue;
+
+            features.append(makeDescriptor(x, 0, gradients));
+            labels.append(node.exactlyPedestrian(x));
+        }
     }
 
     return true;
