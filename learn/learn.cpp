@@ -9,23 +9,13 @@ typedef QVector < int > Labels;
 
 bool readInstances(const char* fileName, Features& features, Labels& labels)
 {
-    QFile file(fileName);
-    const QString path= QFileInfo(file).path();
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical("Can't open \"%s\": %s",
-                  fileName, qPrintable(file.errorString()));
-        return false;
-    }
-
-    QTextStream stream(&file);
-    IdlParser parser(stream);
+    IdlParser parser(fileName);
 
     foreach(QString id, parser.images()) {
         IdlNode node = parser.node(id);
         QImage image;
 
-        QString imageName = QString("%1/%2.png").arg(path, id);
+        QString imageName = QString("%1/%2.png").arg(parser.path(), id);
         qDebug() << "Loading " << imageName;
 
         if (!image.load(imageName)) {

@@ -12,8 +12,18 @@ bool IdlNode::isPedestrian(int loc) const
     return false;
 }
 
-IdlParser::IdlParser(QTextStream& stream)
+IdlParser::IdlParser(const char* fileName)
 {
+    QFile file(fileName);
+    m_path = QFileInfo(file).path();
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical("Can't open \"%s\": %s",
+                  fileName, qPrintable(file.errorString()));
+        return;
+    }
+
+    QTextStream stream(&file);
     while (!(stream.skipWhiteSpace(), stream.atEnd())) {
         QString id;
         int top, left, bottom, right;

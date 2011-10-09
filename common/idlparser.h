@@ -18,13 +18,15 @@ private:
 class IdlParser
 {
 public:
-    explicit IdlParser(QTextStream& stream);
+    explicit IdlParser(const char* fileName);
 
     const QStringList& images() const { return m_images; }
     const IdlNode node(QString id) const { return m_node[id]; }
+    QString path() const { return m_path; }
 private:
     QStringList m_images;
     QMap<QString, IdlNode> m_node;
+    QString m_path;
 };
 
 #endif // IDLPARSER_H
