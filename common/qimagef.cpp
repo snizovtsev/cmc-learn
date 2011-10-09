@@ -8,7 +8,8 @@ QImageF::QImageF(const QImage &source)
     : m_width(source.width()),
       m_height(source.height()),
       m_data_len(m_width * m_height),
-      m_data(new qreal[m_data_len])
+      m_data(new qreal[m_data_len]),
+      m_cacheKey(source.cacheKey())
 {
     qreal* data = m_data;
 
@@ -32,6 +33,8 @@ QImageF::QImageF(const QImageF &other)
 
     m_data = new qreal[m_data_len];
     std::copy(other.m_data, other.m_data + m_data_len, m_data);
+
+    m_cacheKey = other.cacheKey();
 }
 
 inline qreal& QImageF::pixel(int x, int y) const

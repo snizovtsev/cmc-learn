@@ -21,14 +21,14 @@ void genFeatures(Features& features, Labels& labels, const TrainItem& item)
     Q_ASSERT(item.bottom == 200);
     Q_ASSERT((item.right - item.left) == 80);
 
-    features.append(makeDescriptor(item.left + PATCH_HMARGIN, item.top, g.xvec, g.yvec));
+    features.append(makeDescriptor(item.left, item.top, g.xvec, g.yvec));
     labels.append(true);
 
-    for (int x = 0; (x + PATCH_WIDTH) < item.left; x += PATCH_WIDTH / 3) {
+    for (int x = 0; (x + PATCH_WIDTH) < item.left; ++x) {
         features.append(makeDescriptor(x, item.top, g.xvec, g.yvec));
         labels.append(false);
     }
-    for (int x = item.right; (x + PATCH_WIDTH) < g.xvec.width(); x += PATCH_WIDTH / 3) {
+    for (int x = item.right; (x + PATCH_WIDTH) < g.xvec.width(); ++x) {
         features.append(makeDescriptor(x, item.top, g.xvec, g.yvec));
         labels.append(false);
     }

@@ -5,10 +5,9 @@
 #include "qimagef.h"
 #include "linear.h"
 
-const int PATCH_WIDTH = 75;
+const int PATCH_WIDTH = 80;
 const int PATCH_HEIGHT = 200;
-const int PATCH_HMARGIN = 2;
-const int CELL_SIZE = 15;
+const int CELL_SIZE = 10;
 const int CELL_ROWS = PATCH_HEIGHT / CELL_SIZE;
 const int CELL_COLUMNS = PATCH_WIDTH / CELL_SIZE;
 
