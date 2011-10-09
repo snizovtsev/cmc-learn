@@ -8,7 +8,7 @@ class CircularBuffer: public QVector<T> {
     typedef QVector<T> super;
     int head;
 public:
-    CircularBuffer(int size): QVector<T>(size), head(0) { }
+    explicit CircularBuffer(int size): QVector<T>(size), head(0) { }
 
     void shift(T value) {
         super::operator[](head++) = value;
