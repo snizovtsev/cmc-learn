@@ -29,6 +29,6 @@ QVector<qreal> diffKernel(qreal sigma);
 QVector<qreal> gaussKernel(qreal sigma);
 
 #define MALLOC(type, count) \
-    static_cast <type*> (malloc(sizeof(type) * count))
+    static_cast <type*> (malloc(sizeof(type) * (count)))
 
 #endif // UTIL_H
