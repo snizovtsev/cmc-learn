@@ -54,6 +54,29 @@ struct CacheKey {
     }
 };
 
+static void approximate(struct feature_node* ptr, double x)
+{
+    double L = 0.3;
+
+    for (int n = -NONLINEAR_N; n <= NONLINEAR_N; ++n) {
+        if (x == 0.0) {
+            (ptr++)->value = 0.0;
+            (ptr++)->value = 0.0;
+            continue;
+        }
+
+        double lambda = n * L;
+        double sqrt_k = x / cosh(M_PI * lambda);
+
+        bool minus = sqrt_k < 0.0;
+        sqrt_k = sqrt(fabs(sqrt_k));
+
+        double arg = -lambda * log(x);
+        (ptr++)->value = cos(arg) * sqrt_k;
+        (ptr++)->value = sin(arg) * sqrt_k * (minus ? -1: 1);
+    }
+}
+
 struct feature_node* makeDescriptor(int left, int top, const OrientedGradients& gradients)
 {
     struct feature_node* result = MALLOC(struct feature_node, NFEATURES + 1);
@@ -78,7 +101,7 @@ struct feature_node* makeDescriptor(int left, int top, const OrientedGradients& 
 
             HOG* cell = cache[key];
             for (int s = 0; s < HOG::NSTEPS; ++s)
-                (ptr++)->value = cell->weight[s];
+                approximate(ptr, cell->weight[s]);
         }
     }
 

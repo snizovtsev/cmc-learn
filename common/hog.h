@@ -28,7 +28,9 @@ struct HOG {
     static int hash(qreal x, qreal y);
 };
 
-const int NFEATURES = CELL_ROWS * CELL_COLUMNS * HOG::NSTEPS;
+const int NONLINEAR_N = 2;
+const int NFEATURES = CELL_ROWS * CELL_COLUMNS *
+        HOG::NSTEPS * (NONLINEAR_N * 2 + 1) * 2 /* real and imagine part */;
 
 struct feature_node* makeDescriptor(int left, int top, const OrientedGradients& gradients);
 
