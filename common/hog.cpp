@@ -1,5 +1,6 @@
 #include "hog.h"
 #include "util.h"
+#include "tweaks.h"
 
 #include <QtCore>
 
@@ -35,8 +36,8 @@ int HOG::hash(qreal x, qreal y)
 OrientedGradients::OrientedGradients(QImage image)
     : xvec(image), yvec(xvec), cacheKey(image.cacheKey())
 {
-    static const QVector<qreal> gauss = gaussKernel(1.5);
-    static const QVector<qreal> diff = diffKernel(1.5);
+    static const QVector<qreal> gauss = gaussKernel(tweaks::blur_sigma);
+    static const QVector<qreal> diff = diffKernel(tweaks::blur_sigma);
 
     xvec.rowFilter(diff);
     xvec.columnFilter(gauss);
@@ -54,26 +55,24 @@ struct CacheKey {
     }
 };
 
-static void approximate(struct feature_node* ptr, double x)
+static void approximate(struct feature_node* &out_ptr, double x)
 {
-    double L = 0.3;
-
     for (int n = -NONLINEAR_N; n <= NONLINEAR_N; ++n) {
         if (x == 0.0) {
-            (ptr++)->value = 0.0;
-            (ptr++)->value = 0.0;
+            (out_ptr++)->value = 0.0;
+            (out_ptr++)->value = 0.0;
             continue;
         }
 
-        double lambda = n * L;
+        double lambda = n * tweaks::nonlinear_L;
         double sqrt_k = x / cosh(M_PI * lambda);
 
         bool minus = sqrt_k < 0.0;
         sqrt_k = sqrt(fabs(sqrt_k));
 
         double arg = -lambda * log(x);
-        (ptr++)->value = cos(arg) * sqrt_k;
-        (ptr++)->value = sin(arg) * sqrt_k * (minus ? -1: 1);
+        (out_ptr++)->value = cos(arg) * sqrt_k;
+        (out_ptr++)->value = sin(arg) * sqrt_k * (minus ? -1: 1);
     }
 }
 
