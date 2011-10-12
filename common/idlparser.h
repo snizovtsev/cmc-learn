@@ -8,7 +8,6 @@ public:
     IdlNode();
 
     void addPedestrian(int loc) { m_loc.append(loc); }
-    bool exactlyPedestrian(int loc) const { return m_loc.contains(loc); }
     bool isPedestrian(int loc) const;
 
     const QList<int>& pedestrians() const { return m_loc; }

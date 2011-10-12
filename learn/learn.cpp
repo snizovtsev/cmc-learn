@@ -24,12 +24,16 @@ bool readInstances(const char* fileName, Features& features, Labels& labels)
         }
 
         OrientedGradients gradients(image);
-        for (int x = 0; (x + PATCH_WIDTH) < image.width(); ++x) {
-            if (node.isPedestrian(x) && !node.exactlyPedestrian(x))
+        for (int x = 0; (x + PATCH_WIDTH) < image.width(); x += PATCH_WIDTH) {
+            if (node.isPedestrian(x))
                 continue;
-
             features.append(makeDescriptor(x, 0, gradients));
-            labels.append(node.exactlyPedestrian(x));
+            labels.append(false);
+        }
+
+        foreach (int loc, node.pedestrians()) {
+            features.append(makeDescriptor(loc, 0, gradients));
+            labels.append(true);
         }
     }
 
@@ -58,7 +62,7 @@ int main(int argc, char* argv[])
     problem.x = features.data();
 
     struct parameter param;
-    param.solver_type = L2R_L2LOSS_SVC;
+    param.solver_type = L2R_L2LOSS_SVC_DUAL;
     param.C = 0.01; /* [Dalal and Triggs, 2005, Sect. 6.6] */
     param.eps = 1e-4;
     param.nr_weight = 0;
