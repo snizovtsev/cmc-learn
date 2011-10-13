@@ -34,7 +34,7 @@ QImageF::QImageF(const QImageF &other)
     std::copy(other.m_data, other.m_data + m_data_len, m_data);
 }
 
-inline qreal& QImageF::pixel(int x, int y) const
+qreal& QImageF::pixel(int x, int y) const
 {
     x = abs(x);
     y = abs(y);
