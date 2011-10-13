@@ -9,6 +9,7 @@ public:
 
     void addPedestrian(int loc) { m_loc.append(loc); }
     bool isPedestrian(int loc) const;
+    bool intersects(int loc) const;
 
     const QList<int>& pedestrians() const { return m_loc; }
 private:

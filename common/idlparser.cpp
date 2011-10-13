@@ -12,6 +12,15 @@ bool IdlNode::isPedestrian(int loc) const
     return false;
 }
 
+bool IdlNode::intersects(int loc) const
+{
+    foreach (int ped, m_loc) {
+        if (loc >= ped - PATCH_WIDTH && loc <= ped + PATCH_WIDTH)
+            return true;
+    }
+    return false;
+}
+
 IdlParser::IdlParser(const char* fileName)
 {
     QFile file(fileName);

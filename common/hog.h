@@ -4,12 +4,7 @@
 #include <QtGlobal>
 #include "qimagef.h"
 #include "linear.h"
-
-const int PATCH_WIDTH = 80;
-const int PATCH_HEIGHT = 200;
-const int CELL_SIZE = 10;
-const int CELL_ROWS = PATCH_HEIGHT / CELL_SIZE;
-const int CELL_COLUMNS = PATCH_WIDTH / CELL_SIZE;
+#include "tweaks.h"
 
 struct OrientedGradients {
     QImageF xvec;
