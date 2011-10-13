@@ -14,9 +14,9 @@ public:
     qreal* data() { return m_data; }
     const qreal* data() const { return m_data; }
 
-    int width() { return m_width; }
-    int height() { return m_height; }
-    int data_len() { return m_data_len; }
+    int width() const { return m_width; }
+    int height() const { return m_height; }
+    int data_len() const { return m_data_len; }
 
     qreal& pixel(int x, int y) const;
 
