@@ -6,13 +6,15 @@ SOURCES += \
     util.cpp \
     hog.cpp \
     idlparser.cpp \
-    tweaks.cpp
+    tweaks.cpp \
+    detection.cpp
 
 HEADERS += \
     qimagef.h \
     util.h \
     hog.h \
     idlparser.h \
-    tweaks.h
+    tweaks.h \
+    detection.h
 
 LIBS += -llinear

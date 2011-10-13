@@ -1,49 +1,17 @@
 #include <QtCore>
 #include <QPainter>
-
-#include <hog.h>
 #include <linear.h>
 
-QVector<int> detect(const model* model, QImage image)
-{
-    QVector<int> result;
-    OrientedGradients gradients(image);
-
-    double lastValue = -1;
-    int lastX = -PATCH_WIDTH;
-
-    for (int x = 0; x + PATCH_WIDTH < gradients.xvec.width(); x += 2) {
-        struct feature_node* descr = makeDescriptor(x, 0, gradients);
-        double value;
-
-        if (1 == predict_values(model, descr, &value)) {
-            if (x - lastX > PATCH_WIDTH * 0.7) {
-                result.push_back(x);
-                lastX = x;
-                lastValue = value;
-            } else if (lastValue < value) {
-                result[result.size()-1] = x;
-                lastX = x;
-                lastValue = value;
-            }
-        }
-
-        //qDebug("%d %lf", x, value);
-
-        free(descr);
-    }
-
-    return result;
-}
+#include "detection.h"
+#include "tweaks.h"
 
 void label(QImage& image, const QVector<int> results)
 {
     QPainter painter(&image);
     painter.setPen(Qt::green);
 
-    foreach(int x, results) {
+    foreach(int x, results)
         painter.drawRect(x, 0, PATCH_WIDTH, PATCH_HEIGHT);
-    }
 }
 
 void processFile(const struct model* model, const QString &fileName, bool labeled)
@@ -56,7 +24,7 @@ void processFile(const struct model* model, const QString &fileName, bool labele
         return;
     }
 
-    QVector <int> pedestrians = detect(model, image);
+    QVector <int> pedestrians = detectPedestrians(model, OrientedGradients(image));
     QFileInfo info(fileName);
 
     QTextStream out(stdout);
