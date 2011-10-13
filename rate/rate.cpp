@@ -46,8 +46,13 @@ int main(int argc, char* argv[])
         }
     }
 
-    printf("Recall:\t\t%lf %%\n", 100.0 * recall_found / recall_all);
-    printf("Precision:\t%lf %%\n", 100.0 * precision_right / precision_all);
+    double recall = (double) recall_found / recall_all;
+    double precision = (double) precision_right / precision_all;
+    double f_score = 2 * precision * recall / (precision + recall);
+
+    printf("Recall:\t\t%lf %%\n", 100 * recall);
+    printf("Precision:\t%lf %%\n", 100 * precision);
+    printf("F score:\t%lf %%\n", 100 * f_score);
 
     return 0;
 }
