@@ -8,11 +8,11 @@
 
 QVector <struct feature_node*> features;
 QVector <int> labels;
-QMap <QString, QImage> image;
 QMap <QString, OrientedGradients*> gradients;
 
 static bool initModel(const IdlParser& parser)
 {
+    QMap <QString, QImage> image;
     int positive = 0;
 
     foreach (QString id, parser.images()) {
@@ -82,7 +82,7 @@ static int bootstrap(const IdlParser& parser, const struct model* model)
 {
     int appended = 0;
 
-    foreach (QString id, image.keys()) {
+    foreach (QString id, parser.images()) {
         QVector <int> found = detectPedestrians(model, *gradients[id]);
         IdlNode truth = parser.node(id);
 
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
     struct parameter param;
     param.solver_type = L2R_L2LOSS_SVC_DUAL;
     param.C = tweaks::svm_C;
-    param.eps = 1e-4;
+    param.eps = 1e-3;
     param.nr_weight = 0;
     param.weight_label = NULL;
     param.weight = NULL;
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
     struct model* pedestrianModel = train(&problem, &param);
 
     qDebug() << "Bootstrapping...";
-    int max_steps = 3, false_hits;
+    int max_steps = tweaks::learn_steps, false_hits;
     while (max_steps > 0 && (false_hits = bootstrap(parser, pedestrianModel)) > 0) {
         qDebug() << false_hits << "false hits added, retraining...";
         qDebug() << "Total number of descriptors: " << features.size();

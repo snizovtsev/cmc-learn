@@ -13,6 +13,7 @@ namespace tweaks {
     extern double blur_sigma;
     extern double nonlinear_L;
     extern double svm_C;
+    extern uint learn_steps;
 
     void load(int &argc, char** &argv);
 }
