@@ -13,7 +13,7 @@ HOG::HOG(int left, int top, const OrientedGradients& gradients)
             qreal x = gradients.xvec.pixel(left + j, top + i);
             qreal y = gradients.yvec.pixel(left + j, top + i);
 
-            weight[HOG::hash(x, y)] += 1.0; // FIXME
+            weight[HOG::hash(x, y)] += hypot(x, y);
         }
     }
 }
@@ -91,16 +91,34 @@ struct feature_node* makeDescriptor(int left, int top, const OrientedGradients& 
 
     for (int r = 0; r < CELL_ROWS; ++r) {
         for (int c = 0; c < CELL_COLUMNS; ++c) {
-            int x = left + c * CELL_SIZE;
-            int y = top + r * CELL_SIZE;
+            HOG cell;
+            double norm = 0.0;
 
-            CacheKey key = {x, y, gradients.cacheKey};
-            if (!cache.contains(key))
-                cache.insert(key, new HOG(x, y, gradients));
+            for (int i = -1; i <= 1; ++i) {
+                for (int j = -1; j <= 1; ++j) {
+                    int x = left + (c + i) * CELL_SIZE;
+                    int y = top + (r + j) * CELL_SIZE;
 
-            HOG* cell = cache[key];
+                    CacheKey key = {x, y, gradients.cacheKey};
+                    HOG *curCell;
+                    if (!cache.contains(key)) {
+                        curCell = new HOG(x, y, gradients);
+                        cache.insert(key, curCell);
+                    } else {
+                        curCell = cache[key];
+                    }
+
+                    if (i == 0 && j == 0)
+                        cell = *curCell;
+
+                    for (int s = 0; s < HOG::NSTEPS; ++s)
+                        norm += curCell->weight[s] * curCell->weight[s];
+                }
+            }
+
+            norm = sqrt(sqrt(norm) + 0.01);
             for (int s = 0; s < HOG::NSTEPS; ++s)
-                approximate(ptr, cell->weight[s]);
+                approximate(ptr, cell.weight[s] / norm);
         }
     }
 
