@@ -12,7 +12,6 @@ QMap <QString, OrientedGradients*> gradients;
 
 static bool initModel(const IdlParser& parser)
 {
-    QMap <QString, QImage> image;
     int positive = 0;
 
     foreach (QString id, parser.images()) {
@@ -21,15 +20,15 @@ static bool initModel(const IdlParser& parser)
         QString imageName = QString("%1/%2.png").arg(parser.path(), id);
         qDebug() << "Loading " << imageName;
 
-        if (!image[id].load(imageName)) {
+        QImage image;
+        if (!image.load(imageName)) {
             qCritical("Error loading \"%s\"", qPrintable(imageName));
             return false;
         }
-
-        gradients[id] = new OrientedGradients(image[id]);
+        gradients[id] = new OrientedGradients(image);
 
         foreach (int loc, node.pedestrians()) {
-            QImage clipped = image[id].copy(loc, 0, PATCH_WIDTH, PATCH_HEIGHT);
+            QImage clipped = image.copy(loc, 0, PATCH_WIDTH, PATCH_HEIGHT);
 
             for (int i = 0; i < 6; ++i) {
                 QImage patch = clipped.transformed(QMatrix()
@@ -57,18 +56,20 @@ static bool initModel(const IdlParser& parser)
 
     while (negative < positive) {
         QString id = parser.images().at(rand() % image_count);
-        const QImage img = image[id];
         IdlNode node = parser.node(id);
 
-        if (img.width() <= 3 * PATCH_WIDTH)
+        OrientedGradients *g = gradients[id];
+        const int width = g->xvec.width();
+
+        if (width <= 3 * PATCH_WIDTH)
             break;
 
         do {
-            int x = rand() % (img.width() - PATCH_WIDTH - 1);
+            int x = rand() % (width - PATCH_WIDTH - 1);
             if (node.intersects(x))
                 continue;
 
-            features.append(makeDescriptor(x, 0, *gradients[id]));
+            features.append(makeDescriptor(x, 0, *g));
             labels.append(false);
             ++negative;
             break;
