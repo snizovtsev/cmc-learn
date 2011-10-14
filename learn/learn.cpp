@@ -103,8 +103,10 @@ static int bootstrap(const IdlParser& parser, const struct model* model)
 
 int main(int argc, char* argv[])
 {
+    tweaks::load(argc, argv);
+
     if (argc != 3) {
-        qCritical() << "Usage:" << argv[0] << "[markup file] [model file]";
+        qCritical() << "Usage:" << argv[0] << "[tweaks] <markup> <model>";
         return 1;
     }
 

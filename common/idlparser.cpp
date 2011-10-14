@@ -29,7 +29,7 @@ IdlParser::IdlParser(const char* fileName)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("Can't open \"%s\": %s",
                   fileName, qPrintable(file.errorString()));
-        return;
+        exit(EXIT_FAILURE);
     }
 
     QTextStream stream(&file);

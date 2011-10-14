@@ -47,14 +47,17 @@ void processFile(const struct model* model, const QString &fileName, bool labele
 
 int main(int argc, char* argv[])
 {
+    tweaks::load(argc, argv);
+
     if (argc <= 1) {
-        qCritical() << "Usage:" << argv[0] << "model [--label] files_or_directories";
+        qCritical() << "Usage:" << argv[0] << "[tweaks] <model> [--label] <files_or_directories>";
         return 1;
     }
 
     struct model* pedestrianModel = load_model(argv[1]);
     if (0 == pedestrianModel) {
         qCritical("Can't load %s", argv[1]);
+        return 1;
     }
 
     bool label = false;
