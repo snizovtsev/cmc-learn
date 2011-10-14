@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     struct model* pedestrianModel = train(&problem, &param);
 
     qDebug() << "Bootstrapping...";
-    int max_steps = 0, false_hits;
+    int max_steps = 3, false_hits;
     while (max_steps > 0 && (false_hits = bootstrap(parser, pedestrianModel)) > 0) {
         qDebug() << false_hits << "false hits added, retraining...";
         qDebug() << "Total number of descriptors: " << features.size();
