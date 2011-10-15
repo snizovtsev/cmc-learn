@@ -1,5 +1,12 @@
 train/
 tests/
+groups/*.svc
+groups/*.model
+groups/train-*
+groups/*.out
+groups/*.data
+.*.swp
+*.log
 *.o
 *.a
 bin/
