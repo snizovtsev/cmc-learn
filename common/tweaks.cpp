@@ -3,10 +3,10 @@
 #include <QtCore>
 
 namespace tweaks {
-    double blur_sigma = 1.5;
-    double nonlinear_L = 0.3;
+    double blur_sigma = 3.4;
+    double nonlinear_L = 0.45;
     double svm_C = 1.0;
-    uint learn_steps = 5;
+    uint learn_steps = 4;
 
     void load(int &argc, char** &argv)
     {
