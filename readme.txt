@@ -13,6 +13,12 @@ Bootstrapping  [+]
 
 Комментарии:
 
+Отчёты (графики) скользящего контроля находятся в reports. В каталоге groups находятся
+скрипты и индексы выборки, которые были использованы для него.
+
+Классификатор обучен на файлах, перечисленных в release.idl (это часть тренировочной
+плюс вся тестовая выборка). Для обучения может понадобиться около 1GB RAM.
+
 Обучение: learn <idl файл> <файл модели>
 
 Детектирование: predict <файл модели> <файлы или директории> ...
@@ -22,6 +28,7 @@ Bootstrapping  [+]
 Оценка качества: rate <idl файл ответов> [результат predict]
 
 Примеры:
+	learn release.idl model.txt
 	predict model.txt tests > result.txt
 	rate tests/test-processed.idl results.txt
 	predict model.txt tests/*.png | rate tests/test-processed.idl
