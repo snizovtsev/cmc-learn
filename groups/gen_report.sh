@@ -1,15 +1,24 @@
 #!/bin/bash
 
 # Example:
-# ./gen_report.sh approx_step 0.25 0.05 0.5
+# ./gen_report.sh approx_step
 
 LANG=C
 
-REPORT=$1
-VALUES=`seq $2 $3 $4`
-
 NFOLDS=5
 FOLDS=`seq 1 $NFOLDS`
+
+REPORT=$1
+FOUND_VALUES=`ls ?-$REPORT-*.out | sed -r s/[1-$NFOLDS]-$REPORT-\(.\*\)\\\\.out/\\\\1/g | sort -nu`
+VALUES=""
+# Check if values is ready
+for value in $FOUND_VALUES; do
+	append=true
+	for fold in $FOLDS; do
+		[ -f $fold-$REPORT-$value.out ] || append=false
+	done
+	( $append ) && VALUES="$VALUES $value"
+done
 
 rm $REPORT.data
 
