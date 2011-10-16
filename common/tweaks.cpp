@@ -6,7 +6,7 @@ namespace tweaks {
     double blur_sigma = 3.4;
     double nonlinear_L = 0.45;
     double svm_C = 1.0;
-    uint learn_steps = 4;
+    uint learn_steps = 5;
 
     void load(int &argc, char** &argv)
     {
