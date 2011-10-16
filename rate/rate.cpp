@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
     if (argc == 3) {
         if (NULL == freopen(argv[2], "rt", stdin)) {
-            qCritical("Can't open '%s'", argv[2]);
+            qDebug("Can't open '%s'", argv[2]);
             return 1;
         }
         --argc;

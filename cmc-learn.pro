@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-CONFIG += ordered
+CONFIG += ordered console
 SUBDIRS = common learn predict rate
 
 learn.depends = common

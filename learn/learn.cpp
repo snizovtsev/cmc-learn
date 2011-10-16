@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
     tweaks::load(argc, argv);
 
     if (argc != 3) {
-        qCritical() << "Usage:" << argv[0] << "[tweaks] <markup> <model>";
+        qDebug() << "Usage:" << argv[0] << "[tweaks] <markup> <model>";
         return 1;
     }
 

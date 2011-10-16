@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     tweaks::load(argc, argv);
 
     if (argc <= 1) {
-        qCritical() << "Usage:" << argv[0] << "[tweaks] <model> [--label] <files_or_directories>";
+        qDebug() << "Usage:" << argv[0] << "[tweaks] <model> [--label] <files_or_directories>";
         return 1;
     }
 
